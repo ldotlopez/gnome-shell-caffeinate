@@ -16,7 +16,9 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-/* exported init */
+
+'use strict';
+
 
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
@@ -29,6 +31,7 @@ const PopupMenu = imports.ui.popupMenu;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Cafe = Me.imports.cafe;
 
 // For compatibility checks, as described above
 const Config = imports.misc.config;
@@ -43,14 +46,16 @@ class Extension {
     }
 
     enable() {
+        this.controller = new Cafe.App();
+
         // Build UI
         this.indicator = new ExampleIndicator();
         this.indicator.switch.connect("activate", (actor, event) => {
             if (actor.state) {
-                this.caffeinate();
+                this.controller.acquire();
             }
             else {
-                this.decaffeinate();
+                this.controller.release();
             }
         });
 
@@ -58,6 +63,10 @@ class Extension {
     }
 
     disable() {
+        if (this.controller !== null) {
+            this.controller.destroy();
+            this.controller = null;
+        }
         if (this.indicator !== null) {
             this.indicator.destroy();
             this.indicator = null;
