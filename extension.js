@@ -37,7 +37,7 @@ const Cafe = Me.imports.cafe;
 const Config = imports.misc.config;
 const SHELL_MINOR = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 
-const ROLE = 'cafe-indicator';
+const ROLE = 'caffeinate-indicator';
 const POSITION = [0, 'right'];
 
 
