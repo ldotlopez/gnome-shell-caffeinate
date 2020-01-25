@@ -1,0 +1,11 @@
+{
+  "name": "cafe",
+  "description": "Pour coffee into your shell",
+  "uuid": "efbfbe4a-3ec2-11ea-b77f-2e728ce88125",
+  "url": "https://github.com/ldotlopez/gnome-shell-cafe",
+  "extension-id": "cafe",
+  "gettext-domain": "cafe",
+  "shell-version": [
+    "3.34"
+  ]
+}
