@@ -45,7 +45,15 @@ class Extension {
     enable() {
         // Build UI
         this.indicator = new ExampleIndicator();
-        this.indicator.switch.connect("activate", this._onSwitch.bind(this));
+        this.indicator.switch.connect("activate", (actor, event) => {
+            if (actor.state) {
+                this.caffeinate();
+            }
+            else {
+                this.decaffeinate();
+            }
+        });
+
         Main.panel.addToStatusArea(ROLE, this.indicator, POSITION[0], POSITION[1]);
     }
 
@@ -53,14 +61,6 @@ class Extension {
         if (this.indicator !== null) {
             this.indicator.destroy();
             this.indicator = null;
-        }
-    }
-
-    _onSwitch(actor, event) {
-        if (actor.state) {
-            this.caffeinate();
-        } else {
-            this.decaffeinate();
         }
     }
 
@@ -80,16 +80,14 @@ var ExampleIndicator = class ExampleIndicator extends PanelMenu.Button {
     _init() {
         super._init(0.0, `${Me.metadata.name} Indicator`, false);
 
-        // Pick an icon
+        // Build icon
         let icon = new St.Icon({
             gicon: new Gio.ThemedIcon({name: 'face-laugh-symbolic'}),
             style_class: 'system-status-icon'
         });
         this.add_actor(icon);
 
-        // Add a menu item
-        // this.menu.addAction('Menu Item', this.menuAction, null);
-
+        // Build switch
         this.switch = new PopupMenu.PopupSwitchMenuItem("Caffeinate", false, null);
         this.menu.addMenuItem(this.switch);
     }
