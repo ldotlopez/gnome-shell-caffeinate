@@ -25,6 +25,7 @@ const St = imports.gi.St;
 
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
+const PopupMenu = imports.ui.popupMenu;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -42,15 +43,33 @@ class Extension {
     }
 
     enable() {
-        this._indicator = new ExampleIndicator();
-		Main.panel.addToStatusArea(ROLE, this._indicator, POSITION[0], POSITION[1]);
+        // Build UI
+        this.indicator = new ExampleIndicator();
+        this.indicator.switch.connect("activate", this._onSwitch.bind(this));
+        Main.panel.addToStatusArea(ROLE, this.indicator, POSITION[0], POSITION[1]);
     }
 
     disable() {
-    	if (this._indicator !== null) {
-	    	this._indicator.destroy();
-	    	this._indicator = null;
-    	}
+        if (this.indicator !== null) {
+            this.indicator.destroy();
+            this.indicator = null;
+        }
+    }
+
+    _onSwitch(actor, event) {
+        if (actor.state) {
+            this.caffeinate();
+        } else {
+            this.decaffeinate();
+        }
+    }
+
+    caffeinate() {
+        log(`Enable caffeine`);
+    }
+
+    decaffeinate() {
+        log(`Disable caffeine`);
     }
 }
 
@@ -66,10 +85,13 @@ var ExampleIndicator = class ExampleIndicator extends PanelMenu.Button {
             gicon: new Gio.ThemedIcon({name: 'face-laugh-symbolic'}),
             style_class: 'system-status-icon'
         });
-        this.actor.add_child(icon);
+        this.add_actor(icon);
 
         // Add a menu item
-        this.menu.addAction('Menu Item', this.menuAction, null);
+        // this.menu.addAction('Menu Item', this.menuAction, null);
+
+        this.switch = new PopupMenu.PopupSwitchMenuItem("Caffeinate", false, null);
+        this.menu.addMenuItem(this.switch);
     }
 
     menuAction() {
